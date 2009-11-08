@@ -2,11 +2,8 @@ h1. sendgrid
 
 h3. What is SendGrid?
 
-SendGrid is an awesome way to send large amounts of email (bells and whistles included) without spending large amounts of money.
-This gem allows for painless integration with ActionMailer and the SendGrid API. The current scope of this gem
-is focused around setting configuration options for outgoing email (essentially, setting categories, filters and the settings that can accompany those filters). SendGrid's service allows for some other 
-cool stuff (such as postback notification of unsubscribes, bounces, etc.), but you'll have to integrate those features
-on your own.
+SendGrid is an awesome way to send large amounts of email (bells and whistles included) without spending large amounts of money. This gem allows for painless integration with ActionMailer and the SendGrid API. The current scope of this gem is focused around setting configuration options for outgoing email (essentially, setting categories, filters and the settings that can accompany those filters). SendGrid's service allows for some other cool stuff (such as postback notification of unsubscribes, bounces, etc.), but you'll have to integrate those features on your own.
+
 Visit "SendGrid":http://sendgrid.com to learn more.
 
 h3. Getting Started
@@ -41,8 +38,8 @@ If you do not already have an ActionMailer class up and running, then check out 
 2) customize your sendgrid settings:
 
 There are 2 types of settings
-- Enable/disable settings
 - Category settings
+- Enable/disable settings
 
 You can set both global and per-email settings - the same syntax is used in either case.
 Here is an example of what typical usage may look like:
@@ -50,10 +47,11 @@ Here is an example of what typical usage may look like:
 <pre>
 class MyMailer < ActionMailer::Base
   include SendGrid
-  sendgrid_enable :ganalytics, :opentracking
+  sendgrid_category :use_subject_lines
+  sendgrid_enable   :ganalytics, :opentracking
   
   def welcome_message(to_user)
-    sendgrid_category("Welcome")
+    sendgrid_category "Welcome"
     
     recipients to_user.email
     subject "Welcome :-)"
@@ -61,8 +59,7 @@ class MyMailer < ActionMailer::Base
   end
   
   def goodbye_message(to_user)
-    sendgrid_category("Goodbye")
-    sendgrid_disable("ganalytics")
+    sendgrid_disable :ganalytics
     
     recipients to_user.email
     subject "Fare thee well :-("
@@ -75,19 +72,19 @@ Category settings can be any text you like and will allow you to view statistics
 <pre>
   sendgrid_category :use_subject_lines
 </pre>
-Calling sendgrid_cateogry from within one of your mailer methods will override this global setting.
+Calling sendgrid_cateogry from within one of your mailer methods will override this global setting. Similarly, calling sendgrid_enable/sendgrid_disable from within a mailer method will add or remove from any defaults that may have been set globally.
 
 Here are a list of supported options for sendgrid_enable and sendgrid_disable:
-- :opentrack
-- :clicktrack
-- :ganalytics
-- :gravatar
-- :subscriptiontrack
-  - Call sendgrid_subscriptiontrack_text(:html => 'Unsubscribe <% Here %>', :plain => 'Unsubscribe Here: <% %>') to set a custom format for html/plain or both.
-- :footer
-    - Call sendgrid_footer_text(:html => '<p>My HTML footer rocks!</p>', :plain => 'My plain text footer is so-so.') to set custom footer text for html/plain or both.
-- :spamcheck
-  - Call sendgrid_spamcheck_maxscore(4.5) to set a custom SpamAssassin threshold at which SendGrid drops emails (default value is 5.0).
+* :opentrack
+* :clicktrack
+* :ganalytics
+* :gravatar
+* :subscriptiontrack
+** Call sendgrid_subscriptiontrack_text(:html => 'Unsubscribe <% Here %>', :plain => 'Unsubscribe Here: <% %>') to set a custom format for html/plain or both.
+* :footer
+** Call sendgrid_footer_text(:html => 'My HTML footer rocks!', :plain => 'My plain text footer is so-so.') to set custom footer text for html/plain or both.
+* :spamcheck
+** Call sendgrid_spamcheck_maxscore(4.5) to set a custom SpamAssassin threshold at which SendGrid drops emails (default value is 5.0).
   
 For further explanation see "SendGrid's wiki page on filters.":http://wiki.sendgrid.com/doku.php?id=filters
 
