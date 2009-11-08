@@ -5,8 +5,9 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "sendgrid"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{A gem that allows simple integration of ActionMailer with SendGrid (http://sendgrid.com)}
+    gem.description = %Q{This gem allows simple integration between ActionMailer and SendGrid. 
+                         SendGrid is an email deliverability API that is affordable and has lots of bells and whistles.}
     gem.email = "stephenrb@gmail.com"
     gem.homepage = "http://github.com/stephenb/sendgrid"
     gem.authors = ["Stephen Blankenship"]
