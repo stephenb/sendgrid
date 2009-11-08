@@ -1,0 +1,89 @@
+h1. sendgrid
+
+h3. What is SendGrid?
+
+SendGrid is an awesome way to send large amounts of email (bells and whistles included) without spending large amounts of money.
+This gem allows for painless integration with ActionMailer and the SendGrid API.
+Visit http://sendgrid.com to learn more.
+
+h3. Getting Started
+
+Before you can do anything with the sendgrid gem, you'll need to create your very own SendGrid account. Go ahead and do so at http://sendgrid.com (there's even a FREE account option).
+
+Next, update your application's SMTP settings to use SendGrid's servers (see http://wiki.sendgrid.com/doku.php?id=get_started).
+
+Example:
+<pre>
+ActionMailer::Base.smtp_settings = {
+  :address => "smtp.sendgrid.net",
+  :port => 25,
+  :domain => "mysite.com",
+  :authentication => :plain,
+  :user_name => "sendgrd_username@mysite.com",
+  :password => "sendgrid_password"
+}
+</pre>
+
+h3. Using the sendgrid Gem
+
+If you do not already have an ActionMailer class up and running, then check out http://guides.rubyonrails.org/action_mailer_basics.html#walkthrough-to-generating-a-mailer
+
+1) add the following line within your mailer class:
+<pre>
+  include SendGrid
+</pre>
+
+2) customize your sendgrid settings:
+
+There are 2 types of settings
+- Enable/disable settings
+- Category settings
+
+You can set both global and per-email settings - the same syntax is used in either case.
+Here is an example of what typical usage may look like:
+
+<pre>
+class MyMailer < ActionMailer::Base
+  include SendGrid
+  sendgrid_enable :ganalytics, :opentracking
+  
+  def welcome_message(to_user)
+    sendgrid_category("Welcome")
+    
+    recipients to_user.email
+    subject "Welcome :-)"
+    body :to_user => to_user
+  end
+  
+  def goodbye_message(to_user)
+    sendgrid_category("Goodbye")
+    sendgrid_disable("ganalytics")
+    
+    recipients to_user.email
+    subject "Fare thee well :-("
+    body :to_user => to_user
+  end
+end
+</pre>
+
+Category settings can be any text you like and will allow you to view statistics per-category (very nice). There is also a custom global setting that will automatically use the subject-line of your email as the sendgrid_category:
+<pre>
+  sendgrid_category(:use_subject_lines)
+</pre>
+Calling sendgrid_cateogry from within one of your mailer methods will override this global setting.
+
+Here are a list of supported options for sendgrid_enable and sendgrid_disable:
+- :opentrack
+- :clicktrack
+- :ganalytics
+- :gravatar
+- :subscriptiontrack
+  - Call sendgrid_subscriptiontrack_text(:html => 'Unsubscribe <% Here %>', :plain => 'Unsubscribe Here: <% %>') to set a custom format for html/plain or both.
+- :footer
+    - Call sendgrid_footer_text(:html => 'My HTML footer rocks!', :plain => 'My plain text footer is so-so.') to set custom footer text for html/plain or both.
+- :spamcheck
+  - Call sendgrid_spamcheck_maxscore(4.5) to set a custom SpamAssassin threshold at which SendGrid drops emails (default value is 5.0).
+  
+For further explanation see http://wiki.sendgrid.com/doku.php?id=filters
+
+
