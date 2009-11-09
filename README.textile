@@ -90,6 +90,6 @@ For further explanation see "SendGrid's wiki page on filters.":http://wiki.sendg
 
 h3. TODO
 
-* Test coverage
+* Test coverage (I would appreciate help writing tests).
 * Possibly integrate with SendGrid's Event API and some of the other goodies they provide.
 
