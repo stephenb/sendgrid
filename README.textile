@@ -8,7 +8,19 @@ Visit "SendGrid":http://sendgrid.com to learn more.
 
 h3. Getting Started
 
-First of all, you'll need the gem. "Click here to get it from gemcutter":http://gemcutter.org/gems/sendgrid.
+First of all, you'll need the gem. You can add sendgrid to your Rails requirements:
+<pre>
+  config.gem "sendgrid", :source => 'http://gemcutter.org'
+</pre>
+
+Or, you can install it as a gem:
+<pre>
+  # if you haven't already, add gemcutter to your gem sources
+  sudo gem install gemcutter
+  gem tumble
+  # install sendgrid
+  sudo gem install sendgrid
+</pre>
 
 Before you can do anything with the sendgrid gem, you'll need to create your very own SendGrid account. Go ahead and do so at "http://sendgrid.com":http://sendgrid.com (there's even a FREE account option).
 

@@ -106,7 +106,7 @@ module SendGrid
 
   # Sets the custom X-SMTPAPI header before sending the email
   def perform_delivery_smtp(mail)
-    puts "SendGrid X-SMTPAPI: #{sendgrid_json_headers(mail)}" if SENDGRID_DEBUG_OUTPUT
+    puts "SendGrid X-SMTPAPI: #{sendgrid_json_headers(mail)}" if Object.const_defined?("SENDGRID_DEBUG_OUTPUT") && SENDGRID_DEBUG_OUTPUT
     headers['X-SMTPAPI'] = sendgrid_json_headers(mail)
     super
   end
