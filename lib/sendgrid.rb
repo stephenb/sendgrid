@@ -107,7 +107,7 @@ module SendGrid
   # Sets the custom X-SMTPAPI header before sending the email
   def perform_delivery_smtp(mail)
     puts "SendGrid X-SMTPAPI: #{sendgrid_json_headers(mail)}" if Object.const_defined?("SENDGRID_DEBUG_OUTPUT") && SENDGRID_DEBUG_OUTPUT
-    headers['X-SMTPAPI'] = sendgrid_json_headers(mail)
+    mail['X-SMTPAPI'] = sendgrid_json_headers(mail)
     super
   end
 
@@ -126,24 +126,27 @@ module SendGrid
       header_opts[:category] = self.class.default_sg_category
     end
 
-    # Set enables
+    # Set enables/disables
     header_opts[:filters] = {} unless header_opts.has_key?(:filters)
-    if (@sg_options && !@sg_options.empty?) || (@sg_disabled_options && !@sg_disabled_options.empty?)
+    enabled_opts = []
+    if @sg_options && !@sg_options.empty?
       # merge the options so that the instance-level "overrides"
-      merged = self.class.default_sg_options
-      merged += @sg_options if @sg_options
-      merged.reject! { |option| @sg_disabled_options.include?(option) } if @sg_disabled_options
-      header_opts[:filters] = filters_hash_from_options(merged)
-    else
-      header_opts[:filters] = filters_hash_from_options(self.class.default_sg_options)
+      merged = self.class.default_sg_options || []
+      merged += @sg_options
+      enabled_opts = merged
+    elsif self.class.default_sg_options
+      enabled_opts = self.class.default_sg_options
+    end
+    if !enabled_opts.empty? || (@sg_disabled_options && !@sg_disabled_options.empty?)
+      header_opts[:filters] = filters_hash_from_options(enabled_opts, @sg_disabled_options)
     end
 
     header_opts.to_json
   end
   
-  def filters_hash_from_options(opts)
+  def filters_hash_from_options(enabled_opts, disabled_opts)
     filters = {}
-    opts.each do |opt|
+    enabled_opts.each do |opt|
       filters[opt] = {'settings' => {'enable' => 1}}
       case opt.to_sym
         when :subscriptiontrack
@@ -170,6 +173,13 @@ module SendGrid
           end
       end
     end
+    
+    if disabled_opts
+      disabled_opts.each do |opt|
+        filters[opt] = {'settings' => {'enable' => 0}}
+      end
+    end
+    
     return filters
   end
   
