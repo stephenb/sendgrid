@@ -100,6 +100,22 @@ Here are a list of supported options for sendgrid_enable and sendgrid_disable:
   
 For further explanation see "SendGrid's wiki page on filters.":http://wiki.sendgrid.com/doku.php?id=filters
 
+h3. Delivering to multiple recipients
+
+There is a per-mailer-method setting that can be used to deliver campaigns to multiple recipients at once. You should still set the "recipients" to an address per the normal ActionMailer usage, but it will not be used.
+
+<pre>
+  sendgrid_recipients ["email1@blah.com", "email2@blah.com", "email2@blah.com", ...]
+</pre>
+
+One issue that arises when delivering multiple emails at once is custom content. Luckily, there is also a per-mailer-method setting that can be used to substitute custom content.
+
+<pre>
+  sendgrid_substitue "<subme>", ["sub text for 1st recipient", "sub text for 2nd recipient", "sub text for 3rd recipient", ...]
+</pre>
+
+In this example, if "<subme>" is in the body of your email SendGrid will automatically substitute it for the string corresponding the recipient being delivered to. NOTE: You should ensure that the length of the substitution array is equal to the length of the recipients array.
+
 h3. TODO
 
 * Test coverage (I would appreciate help writing tests).
