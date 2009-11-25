@@ -18,7 +18,7 @@ module SendGrid
         attr_accessor :default_sg_category, :default_sg_options, :default_subscriptiontrack_text,
                       :default_footer_text, :default_spamcheck_score
       end
-      attr_accessor :sg_category, :sg_options, :sg_disabled_options, :subscriptiontrack_text, :footer_text, :spamcheck_score
+      attr_accessor :sg_category, :sg_options, :sg_disabled_options, :sg_recipients, :sg_substitutions, :subscriptiontrack_text, :footer_text, :spamcheck_score
     end
     base.extend(ClassMethods)
   end
@@ -87,6 +87,20 @@ module SendGrid
     options.each { |option| @sg_disabled_options << option if VALID_OPTIONS.include?(option) }
   end
 
+  # Call within mailer method to add an array of recipients
+  def sendgrid_recipients(emails)
+    @sg_recipients = Array.new unless @sg_recipients
+    @sg_recipients = emails
+  end
+  
+  # Call within mailer method to add an array of substitions
+  # NOTE: you must ensure that the length of the substitions equals the
+  #       length of the sendgrid_recipients.
+  def sendgrid_substitute(placeholder, subs)
+    @sg_substitutions = Hash.new unless @sg_substitutions
+    @sg_substitutions[placeholder] = subs
+  end
+
   # Call within mailer method to override the default value.
   def sendgrid_subscriptiontrack_text(texts)
     @subscriptiontrack_text = texts
@@ -125,6 +139,16 @@ module SendGrid
     elsif self.class.default_sg_category
       header_opts[:category] = self.class.default_sg_category
     end
+    
+    # Set multi-recipients
+    if @sg_recipients && !@sg_recipients.empty?
+      header_opts[:to] = @sg_recipients
+    end
+    
+    # Set custom substitions
+    if @sg_substitutions && !@sg_substitutions.empty?
+      header_opts[:sub] = @sg_substitutions
+    end
 
     # Set enables/disables
     header_opts[:filters] = {} unless header_opts.has_key?(:filters)
@@ -140,7 +164,7 @@ module SendGrid
     if !enabled_opts.empty? || (@sg_disabled_options && !@sg_disabled_options.empty?)
       header_opts[:filters] = filters_hash_from_options(enabled_opts, @sg_disabled_options)
     end
-
+    
     header_opts.to_json
   end
   
