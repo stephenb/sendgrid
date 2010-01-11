@@ -105,25 +105,25 @@ module SendGrid
   def sendgrid_subscriptiontrack_text(texts)
     @subscriptiontrack_text = texts
   end
-  
+
   # Call within mailer method to override the default value.
   def sendgrid_footer_text(texts)
     @footer_text = texts
   end
-  
+
   # Call within mailer method to override the default value.
   def sendgrid_spamcheck_maxscore(score)
     @spamcheck_score = score
   end
-  
-  private
 
-  # Sets the custom X-SMTPAPI header before sending the email
-  def perform_delivery_smtp(mail)
-    puts "SendGrid X-SMTPAPI: #{sendgrid_json_headers(mail)}" if Object.const_defined?("SENDGRID_DEBUG_OUTPUT") && SENDGRID_DEBUG_OUTPUT
-    mail['X-SMTPAPI'] = sendgrid_json_headers(mail)
+  # Sets the custom X-SMTPAPI header after creating the email but before delivery
+  def create!(method_name, *parameters)
     super
+    puts "SendGrid X-SMTPAPI: #{sendgrid_json_headers(mail)}" if Object.const_defined?("SENDGRID_DEBUG_OUTPUT") && SENDGRID_DEBUG_OUTPUT
+    @mail['X-SMTPAPI'] = sendgrid_json_headers(mail)
   end
+
+  private
 
   # Take all of the options and turn it into the json format that SendGrid expects
   def sendgrid_json_headers(mail)
