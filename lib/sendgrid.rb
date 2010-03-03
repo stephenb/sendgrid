@@ -51,8 +51,11 @@ module SendGrid
     end
     
     # Sets the default text for subscription tracking (must be enabled).
-    # Should be a hash containing the html/plain text versions: 
-    #   {:html => "html version", :plain => "plan text version"}
+    # There are two options: 
+    # 1. Add an unsubscribe link at the bottom of the email 
+    #   {:html => "Unsubscribe <% here %>", :plain => "Unsubscribe here: <% %>"}
+    # 2. Replace given text with the unsubscribe link
+    #   {:replace => "<unsubscribe_link>" }
     def sendgrid_subscriptiontrack_text(texts)
       self.default_subscriptiontrack_text = texts
     end
@@ -175,11 +178,19 @@ module SendGrid
       case opt.to_sym
         when :subscriptiontrack
           if @subscriptiontrack_text
-            filters[:subscriptiontrack]['settings']['text/html'] = @subscriptiontrack_text[:html]
-            filters[:subscriptiontrack]['settings']['text/plain'] = @subscriptiontrack_text[:plain]
+            if @subscription_text[:replace]
+              filters[:subscriptiontrack]['settings']['replace'] = @subscription_text[:replace]
+            else
+              filters[:subscriptiontrack]['settings']['text/html'] = @subscriptiontrack_text[:html]
+              filters[:subscriptiontrack]['settings']['text/plain'] = @subscriptiontrack_text[:plain]
+            end
           elsif self.class.default_subscriptiontrack_text
-            filters[:subscriptiontrack]['settings']['text/html'] = self.class.default_subscriptiontrack_text[:html]
-            filters[:subscriptiontrack]['settings']['text/plain'] = self.class.default_subscriptiontrack_text[:plain]
+            if self.class.default_subscriptiontrack_text[:replace]
+              filters[:subscriptiontrack]['settings']['replace'] = self.class.default_subscriptiontrack_text[:replace]
+            else
+              filters[:subscriptiontrack]['settings']['text/html'] = self.class.default_subscriptiontrack_text[:html]
+              filters[:subscriptiontrack]['settings']['text/plain'] = self.class.default_subscriptiontrack_text[:plain]
+            end
           end
   
         when :footer
