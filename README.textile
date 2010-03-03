@@ -93,6 +93,8 @@ Here are a list of supported options for sendgrid_enable and sendgrid_disable:
 * :gravatar
 * :subscriptiontrack
 ** Call sendgrid_subscriptiontrack_text(:html => 'Unsubscribe <% Here %>', :plain => 'Unsubscribe Here: <% %>') to set a custom format for html/plain or both.
+** OR Call sendgrid_subscriptiontrack_text(:replace => '<unsubscribe_link>') to replace all occurrences of <unsubscribe_link> with the url of the unsubscribe link
+
 * :footer
 ** Call sendgrid_footer_text(:html => 'My HTML footer rocks!', :plain => 'My plain text footer is so-so.') to set custom footer text for html/plain or both.
 * :spamcheck
