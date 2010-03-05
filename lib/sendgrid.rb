@@ -9,7 +9,8 @@ module SendGrid
     :gravatar,
     :subscriptiontrack,
     :footer,
-    :spamcheck
+    :spamcheck,
+    :bypass_list_management
   ]
   
   def self.included(base)
