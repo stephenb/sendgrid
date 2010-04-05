@@ -184,8 +184,8 @@ module SendGrid
       case opt.to_sym
         when :subscriptiontrack
           if @subscriptiontrack_text
-            if @subscription_text[:replace]
-              filters[:subscriptiontrack]['settings']['replace'] = @subscription_text[:replace]
+            if @subscriptiontrack_text[:replace]
+              filters[:subscriptiontrack]['settings']['replace'] = @subscriptiontrack_text[:replace]
             else
               filters[:subscriptiontrack]['settings']['text/html'] = @subscriptiontrack_text[:html]
               filters[:subscriptiontrack]['settings']['text/plain'] = @subscriptiontrack_text[:plain]
