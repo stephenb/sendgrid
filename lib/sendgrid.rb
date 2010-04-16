@@ -125,7 +125,7 @@ module SendGrid
     super
     if @sg_substitutions && !@sg_substitutions.empty?
       @sg_substitutions.each do |find, replace|
-        raise ArgumentError.new("Array for #{find} is not the same size as the recipient array") if replace.size != mail.to.size
+        raise ArgumentError.new("Array for #{find} is not the same size as the recipient array") if replace.size != @sg_recipients.size
       end
     end
     puts "SendGrid X-SMTPAPI: #{sendgrid_json_headers(mail)}" if Object.const_defined?("SENDGRID_DEBUG_OUTPUT") && SENDGRID_DEBUG_OUTPUT
