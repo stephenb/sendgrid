@@ -61,9 +61,11 @@ class MyMailer < ActionMailer::Base
   include SendGrid
   sendgrid_category :use_subject_lines
   sendgrid_enable   :ganalytics, :opentracking
+  sendgrid_unique_args :key1 => "value1", :key2 => "value2"
   
   def welcome_message(to_user)
     sendgrid_category "Welcome"
+    sendgrid_unique_args :key2 => "newvalue2", :key3 => "value3"
     
     recipients to_user.email
     subject "Welcome :-)"
@@ -99,8 +101,12 @@ Here are a list of supported options for sendgrid_enable and sendgrid_disable:
 ** Call sendgrid_footer_text(:html => 'My HTML footer rocks!', :plain => 'My plain text footer is so-so.') to set custom footer text for html/plain or both.
 * :spamcheck
 ** Call sendgrid_spamcheck_maxscore(4.5) to set a custom SpamAssassin threshold at which SendGrid drops emails (default value is 5.0).
-  
+
 For further explanation see "SendGrid's wiki page on filters.":http://wiki.sendgrid.com/doku.php?id=filters
+
+Custom parameters can be set using the sendgrid_unique_args methods.  Any key/value pairs defined thusly will
+be included as parameters in SendGrid post backs.  These are especially useful in cases where the recipient's
+email address is not unique or when multiple applications/environments are using the same SendGrid account.
 
 h3. Delivering to multiple recipients
 

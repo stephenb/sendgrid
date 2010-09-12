@@ -17,9 +17,10 @@ module SendGrid
     base.class_eval do
       class << self
         attr_accessor :default_sg_category, :default_sg_options, :default_subscriptiontrack_text,
-                      :default_footer_text, :default_spamcheck_score
+                      :default_footer_text, :default_spamcheck_score, :default_sg_unique_args
       end
-      attr_accessor :sg_category, :sg_options, :sg_disabled_options, :sg_recipients, :sg_substitutions, :subscriptiontrack_text, :footer_text, :spamcheck_score
+      attr_accessor :sg_category, :sg_options, :sg_disabled_options, :sg_recipients, :sg_substitutions, 
+                    :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args
     end
     base.extend(ClassMethods)
   end
@@ -72,11 +73,21 @@ module SendGrid
     def sendgrid_spamcheck_maxscore(score)
       self.default_spamcheck_score = score
     end
+    
+    # Sets the default unique arguments to send
+    def sendgrid_unique_args(unique_args = {})
+      self.default_sg_unique_args = unique_args
+    end
   end
 
   # Call within mailer method to override the default value.
   def sendgrid_category(category)
     @sg_category = category
+  end
+  
+  # Call within mailer method to add/override unique arguments in the defaults
+  def sendgrid_unique_args(unique_args = {})
+    @sg_unique_args = unique_args
   end
 
   # Call within mailer method to add an option not in the defaults.
@@ -137,6 +148,14 @@ module SendGrid
   # Take all of the options and turn it into the json format that SendGrid expects
   def sendgrid_json_headers(mail)
     header_opts = {}
+
+    # set the unique arguments
+    if @sg_unique_args || self.class.default_sg_unique_args
+      unique_args = self.class.default_sg_unique_args || {}
+      unique_args = unique_args.merge(@sg_unique_args)
+      
+      header_opts[:unique_args] = unique_args
+    end
 
     # Set category
     if @sg_category && @sg_category == :use_subject_lines

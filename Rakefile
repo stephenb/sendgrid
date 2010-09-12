@@ -8,9 +8,9 @@ begin
     gem.summary = %Q{A gem that allows simple integration of ActionMailer with SendGrid (http://sendgrid.com)}
     gem.description = %Q{This gem allows simple integration between ActionMailer and SendGrid. 
                          SendGrid is an email deliverability API that is affordable and has lots of bells and whistles.}
-    gem.email = "stephenrb@gmail.com"
-    gem.homepage = "http://github.com/stephenb/sendgrid"
-    gem.authors = ["Stephen Blankenship"]
+    gem.email = "marc.tremblay@gmail.com"
+    gem.homepage = "http://github.com/pansapien/sendgrid"
+    gem.authors = ["Stephen Blankenship", "Marc Tremblay"]
     # gem.add_development_dependency "thoughtbot-shoulda"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
