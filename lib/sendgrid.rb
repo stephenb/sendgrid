@@ -13,6 +13,14 @@ module SendGrid
     :bypass_list_management
   ]
   
+  VALID_GANALYTICS_OPTIONS = [
+    :utm_source, 
+    :utm_medium, 
+    :utm_campaign, 
+    :utm_term, 
+    :utm_content
+  ]
+  
   def self.included(base)
     base.class_eval do
       class << self
@@ -130,6 +138,13 @@ module SendGrid
   def sendgrid_spamcheck_maxscore(score)
     @spamcheck_score = score
   end
+  
+  # Call within mailer method to set custom google analytics options
+  # http://sendgrid.com/documentation/appsGoogleAnalytics
+  def sengrid_ganalytics_options(options)
+    @ganalytics_options = []
+    options.each { |option| @ganalytics_options << option if VALID_GANALYTICS_OPTIONS.include?(option) }
+  end
 
   # Sets the custom X-SMTPAPI header after creating the email but before delivery
   def create!(method_name, *parameters)
@@ -230,6 +245,13 @@ module SendGrid
         when :spamcheck
           if self.class.default_spamcheck_score || @spamcheck_score
             filters[:spamcheck]['settings']['maxscore'] = @spamcheck_score || self.class.default_spamcheck_score
+          end
+        
+        when :ganalytics
+          if @ganalytics_options
+            @ganalytics_options.each do |key, value|
+              filters[:ganalytics]['settings'][key.to_s] = value
+            end
           end
       end
     end
