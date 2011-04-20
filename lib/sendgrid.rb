@@ -141,9 +141,9 @@ module SendGrid
   
   # Call within mailer method to set custom google analytics options
   # http://sendgrid.com/documentation/appsGoogleAnalytics
-  def sengrid_ganalytics_options(options)
+  def sendgrid_ganalytics_options(options)
     @ganalytics_options = []
-    options.each { |option| @ganalytics_options << option if VALID_GANALYTICS_OPTIONS.include?(option) }
+    options.each { |option| @ganalytics_options << option if VALID_GANALYTICS_OPTIONS.include?(option[0].to_sym) }
   end
 
   # Sets the custom X-SMTPAPI header after creating the email but before delivery
