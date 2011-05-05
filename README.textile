@@ -2,6 +2,8 @@ h1. sendgrid
 
 h3. What is SendGrid?
 
+* NOTE: Now updated to work with Rails 3! *
+
 SendGrid is an awesome way to send large amounts of email (bells and whistles included) without spending large amounts of money. This gem allows for painless integration between ActionMailer and the SendGrid SMTP API. The current scope of this gem is focused around setting configuration options for outgoing email (essentially, setting categories, filters and the settings that can accompany those filters). SendGrid's service allows for some other cool stuff (such as postback notification of unsubscribes, bounces, etc.), but you'll have to integrate those features on your own.
 
 Visit "SendGrid":http://sendgrid.com to learn more.
