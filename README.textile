@@ -86,7 +86,7 @@ Here are a list of supported options for sendgrid_enable and sendgrid_disable:
 * :gravatar
 * :subscriptiontrack
 ** Call sendgrid_subscriptiontrack_text(:html => 'Unsubscribe <% Here %>', :plain => 'Unsubscribe Here: <% %>') to set a custom format for html/plain or both.
-** OR Call sendgrid_subscriptiontrack_text(:replace => '.unsubscribe_link.') to replace all occurrences of .unsubscribe_link. with the url of the unsubscribe link
+** OR Call sendgrid_subscriptiontrack_text(:replace => '|unsubscribe_link|') to replace all occurrences of |unsubscribe_link| with the url of the unsubscribe link
 
 * :footer
 ** Call sendgrid_footer_text(:html => 'My HTML footer rocks!', :plain => 'My plain text footer is so-so.') to set custom footer text for html/plain or both.
@@ -98,6 +98,7 @@ For further explanation see "SendGrid's wiki page on filters.":http://wiki.sendg
 h3. Delivering to multiple recipients
 
 There is a per-mailer-method setting that can be used to deliver campaigns to multiple recipients at once. You should still set the "recipients" to an address per the normal ActionMailer usage, but it will not be used.
+It is quite easy to build a robust mass-delivery system utilizing this feature. Note: While it may be worth asking yourself, a SendGrid engineer told me it's best to keep the number of recipients to <= 1,000 per delivery.
 
 <pre>
   sendgrid_recipients ["email1@blah.com", "email2@blah.com", "email2@blah.com", ...]
@@ -106,10 +107,10 @@ There is a per-mailer-method setting that can be used to deliver campaigns to mu
 One issue that arises when delivering multiple emails at once is custom content. Luckily, there is also a per-mailer-method setting that can be used to substitute custom content.
 
 <pre>
-  sendgrid_substitue "<subme>", ["sub text for 1st recipient", "sub text for 2nd recipient", "sub text for 3rd recipient", ...]
+  sendgrid_substitute "|subme|", ["sub text for 1st recipient", "sub text for 2nd recipient", "sub text for 3rd recipient", ...]
 </pre>
 
-In this example, if <code><subme></code> is in the body of your email SendGrid will automatically substitute it for the string corresponding the recipient being delivered to. NOTE: You should ensure that the length of the substitution array is equal to the length of the recipients array.
+In this example, if <code>|subme|</code> is in the body of your email SendGrid will automatically substitute it for the string corresponding the recipient being delivered to. NOTE: You should ensure that the length of the substitution array is equal to the length of the recipients array.
 
 h3. TODO
 
