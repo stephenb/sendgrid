@@ -128,6 +128,11 @@ module SendGrid
     @spamcheck_score = score
   end
 
+  # Call within mailer method to set unique args for this email.
+  def sendgrid_unique_args(args)
+    @sg_unique_args = args
+  end
+
   # Sets the custom X-SMTPAPI header after creating the email but before delivery
   # NOTE: This override is used for Rails 2 ActionMailer classes. 
   def create!(method_name, *parameters)
@@ -196,6 +201,11 @@ module SendGrid
     end
     if !enabled_opts.empty? || (@sg_disabled_options && !@sg_disabled_options.empty?)
       header_opts[:filters] = filters_hash_from_options(enabled_opts, @sg_disabled_options)
+    end
+
+    # Set unique_args
+    if @sg_unique_args && !@sg_unique_args.empty?
+      header_opts[:unique_args] = @sg_unique_args
     end
     
     header_opts.to_json.gsub(/(["\]}])([,:])(["\[{])/, '\\1\\2 \\3')
