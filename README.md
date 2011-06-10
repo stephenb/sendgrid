@@ -56,7 +56,7 @@ Here is an example of what typical usage may look like:
     class MyMailer < ActionMailer::Base
       include SendGrid
       sendgrid_category :use_subject_lines
-      sendgrid_enable   :ganalytics, :opentracking
+      sendgrid_enable   :ganalytics, :opentrack
   
       def welcome_message(user)
         sendgrid_category "Welcome"
