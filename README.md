@@ -63,7 +63,7 @@ Here is an example of what typical usage may look like:
         mail :to => user.email, :subject => "Welcome #{user.name} :-)"
       end
   
-      def goodbye_message(to_user)
+      def goodbye_message(user)
         sendgrid_disable :ganalytics
         mail :to => user.email, :subject => "Fare thee well :-("
       end
