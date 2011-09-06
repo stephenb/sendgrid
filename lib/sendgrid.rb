@@ -134,7 +134,7 @@ module SendGrid
   end
 
   # only override the appropriet methods for the current rails version
-  if const_defined?('Rails') && Rails.version < '3.0.0'
+  if defined?(Rails) && Rails.version < '3.0.0'
 
     # Sets the custom X-SMTPAPI header after creating the email but before delivery
     # NOTE: This override is used for Rails 2 ActionMailer classes. 
