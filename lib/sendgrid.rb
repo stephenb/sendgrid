@@ -133,23 +133,8 @@ module SendGrid
     @sg_unique_args = args
   end
 
-  # only override the appropriet methods for the current rails version
-  if Rails.version < '3.0.0'
-
-    # Sets the custom X-SMTPAPI header after creating the email but before delivery
-    # NOTE: This override is used for Rails 2 ActionMailer classes. 
-    def create!(method_name, *parameters)
-      super
-      if @sg_substitutions && !@sg_substitutions.empty?
-        @sg_substitutions.each do |find, replace|
-          raise ArgumentError.new("Array for #{find} is not the same size as the recipient array") if replace.size != @sg_recipients.size
-        end
-      end
-      puts "SendGrid X-SMTPAPI: #{sendgrid_json_headers(mail)}" if Object.const_defined?("SENDGRID_DEBUG_OUTPUT") && SENDGRID_DEBUG_OUTPUT
-      @mail['X-SMTPAPI'] = sendgrid_json_headers(mail)
-    end
-
-  else
+  # only override the appropriate methods for the current ActionMailer version
+  if ActionMailer::Base.respond_to?(:mail)
 
     protected
 
@@ -165,6 +150,22 @@ module SendGrid
       puts "SendGrid X-SMTPAPI: #{sendgrid_json_headers(message)}" if Object.const_defined?("SENDGRID_DEBUG_OUTPUT") && SENDGRID_DEBUG_OUTPUT
       self.headers['X-SMTPAPI'] = sendgrid_json_headers(message)
     end
+
+  else
+
+    # Sets the custom X-SMTPAPI header after creating the email but before delivery
+    # NOTE: This override is used for Rails 2 ActionMailer classes. 
+    def create!(method_name, *parameters)
+      super
+      if @sg_substitutions && !@sg_substitutions.empty?
+        @sg_substitutions.each do |find, replace|
+          raise ArgumentError.new("Array for #{find} is not the same size as the recipient array") if replace.size != @sg_recipients.size
+        end
+      end
+      puts "SendGrid X-SMTPAPI: #{sendgrid_json_headers(mail)}" if Object.const_defined?("SENDGRID_DEBUG_OUTPUT") && SENDGRID_DEBUG_OUTPUT
+      @mail['X-SMTPAPI'] = sendgrid_json_headers(mail)
+    end
+
   end
 
   private
