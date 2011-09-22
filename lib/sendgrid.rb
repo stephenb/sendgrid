@@ -1,4 +1,5 @@
 require 'json'
+require 'action_mailer'
 
 module SendGrid
 

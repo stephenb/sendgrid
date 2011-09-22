@@ -1,6 +1,7 @@
 source "http://rubygems.org"
 
 gem "json"
+gem 'actionmailer'
 
 # Add dependencies required to use your gem here.
 # Example:
