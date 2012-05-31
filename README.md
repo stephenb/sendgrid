@@ -57,12 +57,14 @@ Here is an example of what typical usage may look like:
       include SendGrid
       sendgrid_category :use_subject_lines
       sendgrid_enable   :ganalytics, :opentrack
-  
+      sendgrid_unique_args :key1 => "value1", :key2 => "value2"
+
       def welcome_message(user)
         sendgrid_category "Welcome"
+        sendgrid_unique_args :key2 => "newvalue2", :key3 => "value3"
         mail :to => user.email, :subject => "Welcome #{user.name} :-)"
       end
-  
+
       def goodbye_message(user)
         sendgrid_disable :ganalytics
         mail :to => user.email, :subject => "Fare thee well :-("
@@ -88,15 +90,19 @@ Here are a list of supported options for sendgrid\_enable and sendgrid\_disable:
   * Call sendgrid\_footer\_text(:html => 'My HTML footer rocks!', :plain => 'My plain text footer is so-so.') to set custom footer text for html, plain or both.
 * :spamcheck
   * Call sendgrid\_spamcheck\_maxscore(4.5) to set a custom SpamAssassin threshold at which SendGrid drops emails (default value is 5.0).
-  
+
 For further explanation see [SendGrid's wiki page on filters.](http://wiki.sendgrid.com/doku.php?id=filters)
+
+Custom parameters can be set using the sendgrid_unique_args methods.  Any key/value pairs defined thusly will
+be included as parameters in SendGrid post backs.  These are especially useful in cases where the recipient's
+email address is not unique or when multiple applications/environments are using the same SendGrid account.
 
 
 Delivering to multiple recipients
 ---------------------------------
 
 There is a per-mailer-method setting that can be used to deliver campaigns to multiple (many) recipients in a single delivery/SMTP call.
-It is quite easy to build a robust mass-delivery system utilizing this feature, and it is quite difficult to deliver a large email campaign quickly without this feature. 
+It is quite easy to build a robust mass-delivery system utilizing this feature, and it is quite difficult to deliver a large email campaign quickly without this feature.
 Note: While it may be worth asking yourself, a SendGrid engineer told me it's best to keep the number of recipients to <= 1,000 per delivery.
 
 
