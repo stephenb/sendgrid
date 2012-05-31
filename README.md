@@ -82,6 +82,7 @@ Here are a list of supported options for sendgrid\_enable and sendgrid\_disable:
 * :opentrack
 * :clicktrack
 * :ganalytics
+  * Call sendgrid\_ganalytics\_options(:utm_source => 'welcome_email', :utm_medium => 'email', :utm_campaign => 'promo', :utm_term => 'intro+text', :utm_content => 'header_link') to set custom Google Analytics variables.
 * :gravatar
 * :subscriptiontrack
   * Call sendgrid\_subscriptiontrack\_text(:html => 'Unsubscribe <% Here %>', :plain => 'Unsubscribe Here: <% %>') to set a custom format for html/plain or both.
