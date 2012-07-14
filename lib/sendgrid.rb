@@ -17,7 +17,7 @@ module SendGrid
     base.class_eval do
       class << self
         attr_accessor :default_sg_category, :default_sg_options, :default_subscriptiontrack_text,
-                      :default_footer_text, :default_spamcheck_score
+                      :default_footer_text, :default_spamcheck_score, :default_sg_unique_args
       end
       attr_accessor :sg_category, :sg_options, :sg_disabled_options, :sg_recipients, :sg_substitutions, :subscriptiontrack_text, :footer_text, :spamcheck_score
     end
@@ -57,6 +57,13 @@ module SendGrid
     def sendgrid_enable(*options)
       self.default_sg_options = Array.new unless self.default_sg_options
       options.each { |option| self.default_sg_options << option if VALID_OPTIONS.include?(option) }
+    end
+    
+    # Sets unique args at the class level. Should be a hash
+    # of name, value pairs.
+    #   { :some_unique_arg => "some_value"}
+    def sendgrid_unique_args(args)
+      self.default_sg_unique_args = args
     end
     
     # Sets the default text for subscription tracking (must be enabled).
@@ -129,10 +136,11 @@ module SendGrid
   end
 
   # Call within mailer method to set unique args for this email.
+  # Merged with class-level unique args, if any exist.
   def sendgrid_unique_args(args)
     @sg_unique_args = args
   end
-
+  
   # only override the appropriate methods for the current ActionMailer version
   if ActionMailer::Base.respond_to?(:mail)
 
@@ -211,8 +219,13 @@ module SendGrid
     end
 
     # Set unique_args
+    if self.class.default_sg_unique_args && !self.class.default_sg_unique_args.empty?
+      header_opts[:unique_args] = self.class.default_sg_unique_args
+    end
+    
     if @sg_unique_args && !@sg_unique_args.empty?
-      header_opts[:unique_args] = @sg_unique_args
+      header_opts[:unique_args] ||= @sg_unique_args
+      header_opts[:unique_args].merge!(@sg_unique_args)
     end
     
     header_opts.to_json.gsub(/(["\]}])([,:])(["\[{])/, '\\1\\2 \\3')
@@ -264,5 +277,4 @@ module SendGrid
     
     return filters
   end
-  
 end
