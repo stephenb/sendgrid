@@ -10,7 +10,7 @@ begin
                          SendGrid is an email deliverability API that is affordable and has lots of bells and whistles.}
     gem.email = "stephenrb@gmail.com"
     gem.homepage = "http://github.com/stephenb/sendgrid"
-    gem.authors = ["Stephen Blankenship"]
+    gem.authors = ["Stephen Blankenship", "Marc Tremblay", "Bob Burbach"]
     gem.add_dependency "json"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
