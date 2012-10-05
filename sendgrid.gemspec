@@ -8,9 +8,9 @@ Gem::Specification.new do |s|
   s.version = "1.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Stephen Blankenship"]
+  s.authors = ["Stephen Blankenship", "Marc Tremblay", "Bob Burbach"]
   s.date = %q{2011-09-08}
-  s.description = %q{This gem allows simple integration between ActionMailer and SendGrid. 
+  s.description = %q{This gem allows simple integration between ActionMailer and SendGrid.
                          SendGrid is an email deliverability API that is affordable and has lots of bells and whistles.}
   s.email = %q{stephenrb@gmail.com}
   s.extra_rdoc_files = [
