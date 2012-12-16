@@ -245,11 +245,6 @@ module SendGrid
       header_opts[:filters] = filters_hash_from_options(enabled_opts, @sg_disabled_options)
     end
 
-    # Set unique_args
-    if @sg_unique_args && !@sg_unique_args.empty?
-      header_opts[:unique_args] = @sg_unique_args
-    end
-
     header_opts.to_json.gsub(/(["\]}])([,:])(["\[{])/, '\\1\\2 \\3')
   end
 
