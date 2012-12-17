@@ -154,11 +154,6 @@ module SendGrid
     options.each { |option| @ganalytics_options << option if VALID_GANALYTICS_OPTIONS.include?(option[0].to_sym) }
   end
 
-  # Call within mailer method to set unique args for this email.
-  def sendgrid_unique_args(args)
-    @sg_unique_args = args
-  end
-
   # only override the appropriate methods for the current ActionMailer version
   if ActionMailer::Base.respond_to?(:mail)
 
@@ -200,6 +195,9 @@ module SendGrid
   # Take all of the options and turn it into the json format that SendGrid expects
   def sendgrid_json_headers(mail)
     header_opts = {}
+
+    #if not called within the mailer method, this will be nil so we default to empty hash
+    @sg_unique_args = @sg_unique_args || {}
 
     # set the unique arguments
     if @sg_unique_args || self.class.default_sg_unique_args
