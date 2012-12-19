@@ -24,7 +24,8 @@ module SendGrid
   def self.included(base)
     base.class_eval do
       class << self
-        attr_accessor :default_sg_category, :default_sg_options, :default_subscriptiontrack_text,
+        attr_accessor :default_sg_category, :default_sg_options, :default_sg_disabled_options,
+                      :default_subscriptiontrack_text,
                       :default_footer_text, :default_spamcheck_score, :default_sg_unique_args
       end
       attr_accessor :sg_category, :sg_options, :sg_disabled_options, :sg_recipients, :sg_substitutions,
@@ -67,7 +68,13 @@ module SendGrid
       self.default_sg_options = Array.new unless self.default_sg_options
       options.each { |option| self.default_sg_options << option if VALID_OPTIONS.include?(option) }
     end
-    
+
+    # Disables a default option for all emails.
+    def sendgrid_disable(*options)
+      self.default_sg_disabled_options = Array.new unless self.default_sg_disabled_options
+      options.each { |option| self.default_sg_disabled_options << option if VALID_OPTIONS.include?(option) }
+    end
+
     # Sets the default text for subscription tracking (must be enabled).
     # There are two options:
     # 1. Add an unsubscribe link at the bottom of the email
@@ -241,9 +248,21 @@ module SendGrid
     elsif self.class.default_sg_options
       enabled_opts = self.class.default_sg_options
     end
+
+    default_disabled = []
+    if self.class.default_sg_disabled_options && !self.class.default_sg_disabled_options.empty?
+      # We have to ignore global disabled options which are enabled in local email
+      default_disabled = self.class.default_sg_disabled_options - enabled_opts
+    end
+
     if !enabled_opts.empty? || (@sg_disabled_options && !@sg_disabled_options.empty?)
-      filters = filters_hash_from_options(enabled_opts, @sg_disabled_options)
+      filters = filters_hash_from_options(enabled_opts, (@sg_disabled_options || []) + default_disabled)
       header_opts[:filters] = filters if filters && !filters.empty?
+    end
+
+    # Set unique_args
+    if @sg_unique_args && !@sg_unique_args.empty?
+      header_opts[:unique_args] = @sg_unique_args
     end
 
     header_opts.to_json.gsub(/(["\]}])([,:])(["\[{])/, '\\1\\2 \\3')
