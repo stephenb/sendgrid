@@ -29,7 +29,7 @@ Example:
       :port => 25,
       :domain => "mysite.com",
       :authentication => :plain,
-      :user_name => "sendgrd_username@mysite.com",
+      :user_name => "sendgrd_username",
       :password => "sendgrid_password"
     }
 
