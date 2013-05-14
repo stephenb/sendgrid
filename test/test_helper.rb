@@ -4,11 +4,8 @@ require 'shoulda'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
-require 'sendgrid'
 require 'action_mailer'
-
-class Test::Unit::TestCase
-end
+require 'sendgrid'
 
 class SendgridCampaignTestMailer < ActionMailer::Base
   include SendGrid
@@ -26,13 +23,9 @@ class SendgridCampaignTestMailer < ActionMailer::Base
   # array must match the :to array
   # :category the sendgrid category used for tracking
   # :html_content, :text_content, :subject
-  def test(options)
+  def create_test(options)
     handle_sendgrid_options(options)
-    recipients(options[:to])
-    from(options[:from])
-    reply_to(options[:reply_to])
-    subject(options[:subject])
-    body(options[:html_content])
+    mail(options)
   end
   
   protected
@@ -49,7 +42,16 @@ class SendgridCampaignTestMailer < ActionMailer::Base
       end
     end
     
-
     sendgrid_category(options[:category])
+  end
+end
+
+class SendgridUniqueArgsMailer < ActionMailer::Base
+  include SendGrid
+  sendgrid_unique_args({ :test_arg => "test value" })
+  
+  def unique_args_test_email(options)
+    sendgrid_unique_args({ :mailer_method_unique_arg => "some value" })
+    mail(options)
   end
 end
