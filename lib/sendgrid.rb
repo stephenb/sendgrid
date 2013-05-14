@@ -232,7 +232,6 @@ module SendGrid
     end
 
     # Set enables/disables
-    header_opts[:filters] = {} unless header_opts.has_key?(:filters)
     enabled_opts = []
     if @sg_options && !@sg_options.empty?
       # merge the options so that the instance-level "overrides"
@@ -243,7 +242,8 @@ module SendGrid
       enabled_opts = self.class.default_sg_options
     end
     if !enabled_opts.empty? || (@sg_disabled_options && !@sg_disabled_options.empty?)
-      header_opts[:filters] = filters_hash_from_options(enabled_opts, @sg_disabled_options)
+      filters = filters_hash_from_options(enabled_opts, @sg_disabled_options)
+      header_opts[:filters] = filters if filters && !filters.empty?
     end
 
     header_opts.to_json.gsub(/(["\]}])([,:])(["\[{])/, '\\1\\2 \\3')

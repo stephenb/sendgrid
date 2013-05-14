@@ -31,8 +31,12 @@ class SendgridTest < Test::Unit::TestCase
   end
   
   should "pass unique args from both the mailer class and the mailer method through custom headers" do
+    @options.delete(:substitutions)
     SendgridUniqueArgsMailer.unique_args_test_email(@options).deliver
     mail = ActionMailer::Base.deliveries.last
-    assert_match ({ :mailer_method_unique_arg => "some value", :test_arg => "test value" }.to_json.gsub(/(["\]}])([,:])(["\[{])/, '\\1\\2 \\3')), mail.header['X-SMTPAPI'].value
+    # assert({ :unique_args => {:mailer_method_unique_arg => "some value", :test_arg => "test value"} }.to_json == mail.header['X-SMTPAPI'].value)
+    expected = { 'unique_args' => {'mailer_method_unique_arg' => "some value", 'test_arg' => "test value"} }
+    actual = JSON.parse(mail.header['X-SMTPAPI'].value)
+    assert_equal(expected, actual)
   end
 end
