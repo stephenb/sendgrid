@@ -207,7 +207,7 @@ module SendGrid
       unique_args = self.class.default_sg_unique_args || {}
       unique_args = unique_args.merge(@sg_unique_args)
 
-      header_opts[:unique_args] = unique_args
+      header_opts[:unique_args] = unique_args unless unique_args.empty?
     end
 
     # Set category
