@@ -4,7 +4,7 @@ require 'send_grid/version'
 Gem::Specification.new do |s|
   s.name = "sendgrid"
   s.version = SendGrid::VERSION
-  s.authors = ["Stephen Blankenship", "Marc Tremblay", "Bob Burbach"]
+  s.authors = ["Stephen Blankenship", "Marc Tremblay", "Bob Burbach", "Drew Tempelmeyer"]
   s.date = "2013-05-15"
   s.description = "This gem allows simple integration between ActionMailer and SendGrid. \n                         SendGrid is an email deliverability API that is affordable and has lots of bells and whistles."
   s.email = "stephenrb@gmail.com"
