@@ -3,6 +3,8 @@ sendgrid
 
 The sendgrid gem makes it easy to make use of [SendGrid](http://sendgrid.com/) features in ActionMailer.
 
+This gem is compatible with Rails >= 3.0.
+
 What is SendGrid?
 -----------------
 
@@ -20,7 +22,7 @@ First of all, you'll need the gem. It's at http://rubygems.org/gems/sendgrid. If
 
 Before you can do anything with the sendgrid gem, you'll need to create your very own SendGrid account. Go ahead and do so at [http://sendgrid.com](http://sendgrid.com) (there's even a FREE account option).
 
-Next, update your application's SMTP settings to use SendGrid's servers (see [SendGrid's getting started guide](http://wiki.sendgrid.com/doku.php?id=get_started) for instructions).
+Next, update your application's SMTP settings to use SendGrid's servers (see [SendGrid's getting started guide](http://sendgrid.com/docs/Integrate/Frameworks/rubyonrails.html) for instructions).
 
 Example:
 
@@ -36,16 +38,7 @@ Example:
 Using the sendgrid Gem
 ----------------------
 
-If you do not already have an ActionMailer class up and running, then check out [this guide.](http://guides.rubyonrails.org/action_mailer_basics.html#walkthrough-to-generating-a-mailer)
-
-1) add the following line within your mailer class:
-
-    include SendGrid
-
-
-2) customize your sendgrid settings:
-
-There are 2 main types of settings
+There are 2 main types of settings:
 
 * Category settings
 * Enable/disable settings
@@ -54,9 +47,8 @@ You can set both global and per-email settings - the same syntax is used in eith
 Here is an example of what typical usage may look like:
 
     class MyMailer < ActionMailer::Base
-      include SendGrid
-      sendgrid_category :use_subject_lines
-      sendgrid_enable   :ganalytics, :opentrack
+      sendgrid_category    :use_subject_lines
+      sendgrid_enable      :ganalytics, :opentrack
       sendgrid_unique_args :key1 => "value1", :key2 => "value2"
 
       def welcome_message(user)
@@ -92,7 +84,7 @@ Here are a list of supported options for sendgrid\_enable and sendgrid\_disable:
 * :spamcheck
   * Call sendgrid\_spamcheck\_maxscore(4.5) to set a custom SpamAssassin threshold at which SendGrid drops emails (default value is 5.0).
 
-For further explanation see [SendGrid's wiki page on filters.](http://wiki.sendgrid.com/doku.php?id=filters)
+For further explanation see [SendGrid's wiki page on filters.](http://sendgrid.com/docs/API_Reference/Web_API/filter_settings.html)
 
 Custom parameters can be set using the sendgrid_unique_args methods.  Any key/value pairs defined thusly will
 be included as parameters in SendGrid post backs.  These are especially useful in cases where the recipient's
