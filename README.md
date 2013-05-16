@@ -1,7 +1,7 @@
 sendgrid
 =========
 
-_Now updated to work with Rails 3._
+The sendgrid gem makes it easy to make use of [SendGrid](http://sendgrid.com/) features in ActionMailer.
 
 What is SendGrid?
 -----------------

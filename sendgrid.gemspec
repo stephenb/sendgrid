@@ -12,24 +12,14 @@ Gem::Specification.new do |s|
     "LICENSE",
     "README.md"
   ]
-  s.files = [
-    ".document",
-    "Gemfile",
-    "Gemfile.lock",
-    "LICENSE",
-    "README.md",
-    "Rakefile",
-    "VERSION",
-    "lib/send_grid.rb",
-    "sendgrid.gemspec",
-    "test/sendgrid_test.rb",
-    "test/test_helper.rb"
-  ]
-  s.homepage = "https://github.com/stephenb/sendgrid"
-  s.require_paths = ["lib"]
-  s.summary = "A gem that allows simple integration of ActionMailer with SendGrid (http://sendgrid.com)"
 
   s.required_rubygems_version = ">= 1.3.6"
+  s.files         = `git ls-files`.split("\n")
+  s.test_files    = `git ls-files -- {test}/*`.split("\n")
+  s.require_paths = ["lib"]
+
+  s.homepage = "https://github.com/stephenb/sendgrid"
+  s.summary = "A gem that allows simple integration of ActionMailer with SendGrid (http://sendgrid.com)"
 
   s.add_runtime_dependency 'rails', '>= 3.0'
   s.add_development_dependency 'shoulda', '>= 0'
