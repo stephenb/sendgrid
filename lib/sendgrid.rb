@@ -1,4 +1,5 @@
 require 'json'
+require 'sendgrid/railtie'
 
 module SendGrid
 
@@ -20,6 +21,8 @@ module SendGrid
     :utm_term,
     :utm_content
   ]
+
+  DEBUG = false
 
   def self.included(base)
     base.class_eval do
@@ -67,7 +70,7 @@ module SendGrid
       self.default_sg_options = Array.new unless self.default_sg_options
       options.each { |option| self.default_sg_options << option if VALID_OPTIONS.include?(option) }
     end
-    
+
     # Sets the default text for subscription tracking (must be enabled).
     # There are two options:
     # 1. Add an unsubscribe link at the bottom of the email
@@ -156,14 +159,10 @@ module SendGrid
     @ganalytics_options = []
     options.each { |option| @ganalytics_options << option if VALID_GANALYTICS_OPTIONS.include?(option[0].to_sym) }
   end
-  
-  # only override the appropriate methods for the current ActionMailer version
-  if ActionMailer::Base.respond_to?(:mail)
 
-    protected
+  protected
 
     # Sets the custom X-SMTPAPI header after creating the email but before delivery
-    # NOTE: This override is used for Rails 3 ActionMailer classes.
     def mail(headers={}, &block)
       m = super
       if @sg_substitutions && !@sg_substitutions.empty?
@@ -171,27 +170,12 @@ module SendGrid
           raise ArgumentError.new("Array for #{find} is not the same size as the recipient array") if replace.size != @sg_recipients.size
         end
       end
-      puts "SendGrid X-SMTPAPI: #{sendgrid_json_headers(message)}" if Object.const_defined?("SENDGRID_DEBUG_OUTPUT") && SENDGRID_DEBUG_OUTPUT
+
+      Rails.logger.debug "SendGrid X-SMTPAPI: #{sendgrid_json_headers(message)}" if DEBUG
+
       self.headers['X-SMTPAPI'] = sendgrid_json_headers(message)
       m
     end
-
-  else
-
-    # Sets the custom X-SMTPAPI header after creating the email but before delivery
-    # NOTE: This override is used for Rails 2 ActionMailer classes.
-    def create!(method_name, *parameters)
-      super
-      if @sg_substitutions && !@sg_substitutions.empty?
-        @sg_substitutions.each do |find, replace|
-          raise ArgumentError.new("Array for #{find} is not the same size as the recipient array") if replace.size != @sg_recipients.size
-        end
-      end
-      puts "SendGrid X-SMTPAPI: #{sendgrid_json_headers(mail)}" if Object.const_defined?("SENDGRID_DEBUG_OUTPUT") && SENDGRID_DEBUG_OUTPUT
-      @mail['X-SMTPAPI'] = sendgrid_json_headers(mail)
-    end
-
-  end
 
   private
 
@@ -201,7 +185,7 @@ module SendGrid
 
     #if not called within the mailer method, this will be nil so we default to empty hash
     @sg_unique_args = @sg_unique_args || {}
-    
+
     # set the unique arguments
     if @sg_unique_args || self.class.default_sg_unique_args
       unique_args = self.class.default_sg_unique_args || {}

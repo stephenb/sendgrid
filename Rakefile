@@ -1,23 +1,5 @@
-require 'rubygems'
+require 'bundler/gem_tasks'
 require 'rake'
-
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "sendgrid"
-    gem.summary = %Q{A gem that allows simple integration of ActionMailer with SendGrid (http://sendgrid.com)}
-    gem.description = %Q{This gem allows simple integration between ActionMailer and SendGrid. 
-                         SendGrid is an email deliverability API that is affordable and has lots of bells and whistles.}
-    gem.email = "stephenrb@gmail.com"
-    gem.homepage = "http://github.com/stephenb/sendgrid"
-    gem.authors = ["Stephen Blankenship", "Marc Tremblay", "Bob Burbach"]
-    gem.add_dependency "json"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-  end
-  Jeweler::GemcutterTasks.new
-rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
-end
 
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
