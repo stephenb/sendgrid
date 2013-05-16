@@ -1,5 +1,5 @@
 require 'json'
-require 'send_grid/railtie'
+require 'sendgrid/railtie'
 
 module SendGrid
 

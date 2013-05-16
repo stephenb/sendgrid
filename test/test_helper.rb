@@ -5,7 +5,7 @@ require 'shoulda'
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'action_mailer'
-require 'send_grid'
+require 'sendgrid'
 
 class SendgridCampaignTestMailer < ActionMailer::Base
   include SendGrid
