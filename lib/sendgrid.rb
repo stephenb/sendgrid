@@ -162,6 +162,8 @@ module SendGrid
 
   protected
 
+    # FIXME: There is an issue here, it's required to copy/paste this method in the class we are using to make
+    #        the gem works. Why? Issue tracker is missing too (in repository).
     # Sets the custom X-SMTPAPI header after creating the email but before delivery
     def mail(headers={}, &block)
       m = super
