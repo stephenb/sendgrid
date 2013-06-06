@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'pry'
 
 class SendgridTest < Test::Unit::TestCase
   def setup
@@ -33,6 +34,7 @@ class SendgridTest < Test::Unit::TestCase
   should "pass unique args from both the mailer class and the mailer method through custom headers" do
     @options.delete(:substitutions)
     SendgridUniqueArgsMailer.unique_args_test_email(@options).deliver
+    # binding.pry
     mail = ActionMailer::Base.deliveries.last
     # assert({ :unique_args => {:mailer_method_unique_arg => "some value", :test_arg => "test value"} }.to_json == mail.header['X-SMTPAPI'].value)
     expected = { 'unique_args' => {'mailer_method_unique_arg' => "some value", 'test_arg' => "test value"} }
