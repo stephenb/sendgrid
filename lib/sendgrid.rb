@@ -160,11 +160,12 @@ module SendGrid
     options.each { |option| @ganalytics_options << option if VALID_GANALYTICS_OPTIONS.include?(option[0].to_sym) }
   end
 
-  protected
+  # protected
 
     # Sets the custom X-SMTPAPI header after creating the email but before delivery
-    def mail(headers={}, &block)
-      m = super
+    # def mail(headers={}, &block)
+    def mail(*args, &block)
+      # m = super
       if @sg_substitutions && !@sg_substitutions.empty?
         @sg_substitutions.each do |find, replace|
           raise ArgumentError.new("Array for #{find} is not the same size as the recipient array") if replace.size != @sg_recipients.size
@@ -174,7 +175,8 @@ module SendGrid
       Rails.logger.debug "SendGrid X-SMTPAPI: #{sendgrid_json_headers(message)}" if DEBUG
 
       self.headers['X-SMTPAPI'] = sendgrid_json_headers(message)
-      m
+      # m
+      super if defined? super
     end
 
   private
