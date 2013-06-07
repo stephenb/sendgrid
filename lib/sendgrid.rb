@@ -160,7 +160,7 @@ module SendGrid
     options.each { |option| @ganalytics_options << option if VALID_GANALYTICS_OPTIONS.include?(option[0].to_sym) }
   end
 
-  # protected
+  protected
 
     # Sets the custom X-SMTPAPI header after creating the email but before delivery
     # def mail(headers={}, &block)
