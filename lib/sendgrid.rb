@@ -26,6 +26,13 @@ module SendGrid
 
   def self.included(base)
     base.class_eval do
+      
+      # NOTE: This code is required to correctly override the ActionMailer::Base
+      # #mail method. Otherwise, mail method for the class will hide completely
+      # the one included from the module.
+      alias_method  :send_grid_old_mail, :mail
+      remove_method :mail
+
       class << self
         attr_accessor :default_sg_category, :default_sg_options, :default_subscriptiontrack_text,
                       :default_footer_text, :default_spamcheck_score, :default_sg_unique_args
@@ -42,6 +49,7 @@ module SendGrid
     # end
 
     base.extend(ClassMethods)
+
   end
 
   module ClassMethods
@@ -163,6 +171,7 @@ module SendGrid
   protected
 
     # Sets the custom X-SMTPAPI header after creating the email but before delivery
+    # def mail(headers={}, &block)
     def mail(headers={}, &block)
       if @sg_substitutions && !@sg_substitutions.empty?
         @sg_substitutions.each do |find, replace|
@@ -173,7 +182,10 @@ module SendGrid
       Rails.logger.debug "SendGrid X-SMTPAPI: #{sendgrid_json_headers(message)}" if DEBUG
 
       self.headers['X-SMTPAPI'] = sendgrid_json_headers(message)
-      super if defined? super
+
+      # NOTE: Added to ensure that ActionMailer::Base#mail method is called,
+      # after SendGrid headers have been injected.
+      send_grid_old_mail(headers, &block)
     end
 
   private
