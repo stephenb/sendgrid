@@ -47,6 +47,7 @@ You can set both global and per-email settings - the same syntax is used in eith
 Here is an example of what typical usage may look like:
 
     class MyMailer < ActionMailer::Base
+      include SendGrid # for sendgrid_enable to work on class level
       sendgrid_category    :use_subject_lines
       sendgrid_enable      :ganalytics, :opentrack
       sendgrid_unique_args :key1 => "value1", :key2 => "value2"
