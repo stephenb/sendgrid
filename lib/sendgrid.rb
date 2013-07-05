@@ -26,6 +26,33 @@ module SendGrid
 
   def self.included(base)
     base.class_eval do
+      
+      # NOTE: This code is required to correctly override the ActionMailer::Base
+      # #mail method. Otherwise, mail method for the class will hide completely
+      # the one included from the module.
+      alias_method :send_grid_old_mail, :mail
+      protected
+
+        # Sets the custom X-SMTPAPI header after creating the email but before delivery
+        # def mail(headers={}, &block)
+        def mail(headers={}, &block)
+          if @sg_substitutions && !@sg_substitutions.empty?
+            @sg_substitutions.each do |find, replace|
+              raise ArgumentError.new("Array for #{find} is not the same size as the recipient array") if replace.size != @sg_recipients.size
+            end
+          end
+
+          Rails.logger.debug "SendGrid X-SMTPAPI: #{sendgrid_json_headers(message)}" if DEBUG
+
+          self.headers['X-SMTPAPI'] = sendgrid_json_headers(message)
+
+          # NOTE: Added to ensure that ActionMailer::Base#mail method is called,
+          # after SendGrid headers have been injected.
+          send_grid_old_mail(headers, &block)
+        end
+
+      public
+
       class << self
         attr_accessor :default_sg_category, :default_sg_options, :default_subscriptiontrack_text,
                       :default_footer_text, :default_spamcheck_score, :default_sg_unique_args
@@ -42,6 +69,7 @@ module SendGrid
     # end
 
     base.extend(ClassMethods)
+
   end
 
   module ClassMethods
@@ -159,23 +187,6 @@ module SendGrid
     @ganalytics_options = []
     options.each { |option| @ganalytics_options << option if VALID_GANALYTICS_OPTIONS.include?(option[0].to_sym) }
   end
-
-  protected
-
-    # Sets the custom X-SMTPAPI header after creating the email but before delivery
-    def mail(headers={}, &block)
-      m = super
-      if @sg_substitutions && !@sg_substitutions.empty?
-        @sg_substitutions.each do |find, replace|
-          raise ArgumentError.new("Array for #{find} is not the same size as the recipient array") if replace.size != @sg_recipients.size
-        end
-      end
-
-      Rails.logger.debug "SendGrid X-SMTPAPI: #{sendgrid_json_headers(message)}" if DEBUG
-
-      self.headers['X-SMTPAPI'] = sendgrid_json_headers(message)
-      m
-    end
 
   private
 
