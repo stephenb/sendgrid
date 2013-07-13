@@ -3,9 +3,3 @@
 coverage
 rdoc
 pkg
-.bundle
-*.gem
-.bundle
-Gemfile.lock
-doc/*
-html/*
