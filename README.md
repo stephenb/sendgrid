@@ -15,8 +15,9 @@ Getting Started
 
 First of all, you'll need the gem. It's at http://rubygems.org/gems/sendgrid. If you're using Bundler, just add the following to your Gemfile.
 
-    gem 'sendgrid'
-
+```ruby
+gem 'sendgrid'
+```
 
 Before you can do anything with the sendgrid gem, you'll need to create your very own SendGrid account. Go ahead and do so at [http://sendgrid.com](http://sendgrid.com) (there's even a FREE account option).
 
@@ -24,14 +25,16 @@ Next, update your application's SMTP settings to use SendGrid's servers (see [Se
 
 Example:
 
-    ActionMailer::Base.smtp_settings = {
-      :address => "smtp.sendgrid.net",
-      :port => 25,
-      :domain => "mysite.com",
-      :authentication => :plain,
-      :user_name => "sendgrd_username",
-      :password => "sendgrid_password"
-    }
+```ruby
+ActionMailer::Base.smtp_settings = {
+  :address => "smtp.sendgrid.net",
+  :port => 25,
+  :domain => "mysite.com",
+  :authentication => :plain,
+  :user_name => "sendgrd_username",
+  :password => "sendgrid_password"
+}
+```
 
 Using the sendgrid Gem
 ----------------------
@@ -40,8 +43,9 @@ If you do not already have an ActionMailer class up and running, then check out 
 
 1) add the following line within your mailer class:
 
-    include SendGrid
-
+```ruby
+include SendGrid
+```
 
 2) customize your sendgrid settings:
 
@@ -53,27 +57,31 @@ There are 2 main types of settings
 You can set both global and per-email settings - the same syntax is used in either case.
 Here is an example of what typical usage may look like:
 
-    class MyMailer < ActionMailer::Base
-      include SendGrid
-      sendgrid_category :use_subject_lines
-      sendgrid_enable   :ganalytics, :opentrack
-      sendgrid_unique_args :key1 => "value1", :key2 => "value2"
+```ruby
+class MyMailer < ActionMailer::Base
+  include SendGrid
+  sendgrid_category :use_subject_lines
+  sendgrid_enable   :ganalytics, :opentrack
+  sendgrid_unique_args :key1 => "value1", :key2 => "value2"
 
-      def welcome_message(user)
-        sendgrid_category "Welcome"
-        sendgrid_unique_args :key2 => "newvalue2", :key3 => "value3"
-        mail :to => user.email, :subject => "Welcome #{user.name} :-)"
-      end
+  def welcome_message(user)
+    sendgrid_category "Welcome"
+    sendgrid_unique_args :key2 => "newvalue2", :key3 => "value3"
+    mail :to => user.email, :subject => "Welcome #{user.name} :-)"
+  end
 
-      def goodbye_message(user)
-        sendgrid_disable :ganalytics
-        mail :to => user.email, :subject => "Fare thee well :-("
-      end
-    end
+  def goodbye_message(user)
+    sendgrid_disable :ganalytics
+    mail :to => user.email, :subject => "Fare thee well :-("
+  end
+end
+```
 
 Category settings can be any text you like and SendGrid's website will allow you to view email statistics per-category (very nice). There is also a custom global setting that will automatically use the subject line of each email as the sendgrid\_category:
 
-    sendgrid_category :use_subject_lines
+```ruby
+sendgrid_category :use_subject_lines
+```
 
 If you have any dynamic subject lines, you'll want to override this setting within the mailer method. Calling sendgrid\_category from within one of your mailer methods will override this global setting. Similarly, calling sendgrid\_enable/sendgrid\_disable from within a mailer method will add or remove from any defaults that may have been set globally.
 
@@ -106,15 +114,16 @@ There is a per-mailer-method setting that can be used to deliver campaigns to mu
 It is quite easy to build a robust mass-delivery system utilizing this feature, and it is quite difficult to deliver a large email campaign quickly without this feature.
 Note: While it may be worth asking yourself, a SendGrid engineer told me it's best to keep the number of recipients to <= 1,000 per delivery.
 
-
-    sendgrid_recipients ["email1@blah.com", "email2@blah.com", "email3@blah.com", ...]
+```ruby
+sendgrid_recipients ["email1@blah.com", "email2@blah.com", "email3@blah.com", ...]
+```
 
 
 One issue that arises when delivering multiple emails at once is custom content. Luckily, there is also a per-mailer-method setting that can be used to substitute custom content.
 
-
-    sendgrid_substitute "|subme|", ["sub text for 1st recipient", "sub text for 2nd recipient", "sub text for 3rd recipient", ...]
-
+```ruby
+sendgrid_substitute "|subme|", ["sub text for 1st recipient", "sub text for 2nd recipient", "sub text for 3rd recipient", ...]
+```
 
 In this example, if <code>|subme|</code> is in the body of your email SendGrid will automatically substitute it for the string corresponding the recipient being delivered to. NOTE: You should ensure that the length of the substitution array is equal to the length of the recipients array.
 
