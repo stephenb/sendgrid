@@ -67,7 +67,7 @@ module SendGrid
       self.default_sg_options = Array.new unless self.default_sg_options
       options.each { |option| self.default_sg_options << option if VALID_OPTIONS.include?(option) }
     end
-    
+
     # Sets the default text for subscription tracking (must be enabled).
     # There are two options:
     # 1. Add an unsubscribe link at the bottom of the email
@@ -156,7 +156,7 @@ module SendGrid
     @ganalytics_options = []
     options.each { |option| @ganalytics_options << option if VALID_GANALYTICS_OPTIONS.include?(option[0].to_sym) }
   end
-  
+
   # only override the appropriate methods for the current ActionMailer version
   if ActionMailer::Base.respond_to?(:mail)
 
@@ -201,7 +201,7 @@ module SendGrid
 
     #if not called within the mailer method, this will be nil so we default to empty hash
     @sg_unique_args = @sg_unique_args || {}
-    
+
     # set the unique arguments
     if @sg_unique_args || self.class.default_sg_unique_args
       unique_args = self.class.default_sg_unique_args || {}
@@ -223,7 +223,7 @@ module SendGrid
 
     # Set multi-recipients
     if @sg_recipients && !@sg_recipients.empty?
-      header_opts[:to] = @sg_recipients
+      header_opts[:to] = @sg_recipients.split(",")
     end
 
     # Set custom substitions
@@ -245,7 +245,6 @@ module SendGrid
       filters = filters_hash_from_options(enabled_opts, @sg_disabled_options)
       header_opts[:filters] = filters if filters && !filters.empty?
     end
-
     header_opts.to_json.gsub(/(["\]}])([,:])(["\[{])/, '\\1\\2 \\3')
   end
 
