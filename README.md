@@ -26,7 +26,7 @@ Example:
 
     ActionMailer::Base.smtp_settings = {
       :address => "smtp.sendgrid.net",
-      :port => 25,
+      :port => 25, # you could also use port 587
       :domain => "mysite.com",
       :authentication => :plain,
       :user_name => "sendgrd_username",
