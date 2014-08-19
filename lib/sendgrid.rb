@@ -10,7 +10,8 @@ module SendGrid
     :subscriptiontrack,
     :footer,
     :spamcheck,
-    :bypass_list_management
+    :bypass_list_management,
+    :templates
   ]
 
   VALID_GANALYTICS_OPTIONS = [
@@ -25,7 +26,8 @@ module SendGrid
     base.class_eval do
       class << self
         attr_accessor :default_sg_category, :default_sg_options, :default_subscriptiontrack_text,
-                      :default_footer_text, :default_spamcheck_score, :default_sg_unique_args
+                      :default_footer_text, :default_spamcheck_score, :default_sg_unique_args,
+                      :default_sg_template
       end
       attr_accessor :sg_category, :sg_options, :sg_disabled_options, :sg_recipients, :sg_substitutions,
                     :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args
@@ -51,6 +53,12 @@ module SendGrid
     def sendgrid_category(category)
       self.default_sg_category = category
     end
+    
+    # Set a default template for all mails
+    def sendgrid_template(template_id)
+      self.default_sg_template = template_id
+      self.sendgrid_enable(:templates)
+    end
 
     # Enables a default option for all emails.
     # See documentation for details.
@@ -63,6 +71,7 @@ module SendGrid
     # * :subscriptiontrack
     # * :footer
     # * :spamcheck
+    # * :templates
     def sendgrid_enable(*options)
       self.default_sg_options = Array.new unless self.default_sg_options
       options.each { |option| self.default_sg_options << option if VALID_OPTIONS.include?(option) }
@@ -254,6 +263,10 @@ module SendGrid
     enabled_opts.each do |opt|
       filters[opt] = {'settings' => {'enable' => 1}}
       case opt.to_sym
+        when :templates
+          if self.class.default_sg_template
+            filters[:templates]['settings']['template_id'] = self.class.default_sg_template
+          end
         when :subscriptiontrack
           if @subscriptiontrack_text
             if @subscriptiontrack_text[:replace]
