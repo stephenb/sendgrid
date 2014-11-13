@@ -28,7 +28,7 @@ module SendGrid
                       :default_footer_text, :default_spamcheck_score, :default_sg_unique_args
       end
       attr_accessor :sg_category, :sg_options, :sg_disabled_options, :sg_recipients, :sg_substitutions,
-                    :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args
+                    :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args, :sg_pool
     end
 
     # NOTE: This commented-out approach may be a "safer" option for Rails 3, but it
@@ -101,6 +101,16 @@ module SendGrid
   # Call within mailer method to override the default value.
   def sendgrid_category(category)
     @sg_category = category
+  end
+
+  # Call within mailer method to concatenate sendgrid categories.
+  # Will not remove duplicates.
+  def append_sendgrid_category(category)
+    @sg_category = (@sg_category || []) + category
+  end
+
+  def sendgrid_pool(pool_name)
+    @sg_pool = pool_name
   end
 
   # Call within mailer method to set unique args for this email.
@@ -209,6 +219,9 @@ module SendGrid
 
       header_opts[:unique_args] = unique_args unless unique_args.empty?
     end
+
+    # Set pool
+    header_opts[:ip_pool] = @sg_pool if @sg_pool
 
     # Set category
     if @sg_category && @sg_category == :use_subject_lines
