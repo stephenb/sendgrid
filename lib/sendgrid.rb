@@ -28,7 +28,7 @@ module SendGrid
                       :default_footer_text, :default_spamcheck_score, :default_sg_unique_args
       end
       attr_accessor :sg_category, :sg_options, :sg_disabled_options, :sg_recipients, :sg_substitutions,
-                    :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args, :sg_send_at
+                    :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args, :sg_pool, :sg_send_at
     end
 
     # NOTE: This commented-out approach may be a "safer" option for Rails 3, but it
@@ -106,6 +106,11 @@ module SendGrid
   # Call within mailer method to set send time for this mail
   def sendgrid_send_at(utc_timestamp)
     @sg_send_at = utc_timestamp
+  end
+
+  # Call within mailer method to set ip pool for this email
+  def sendgrid_pool(pool_name)
+    @sg_pool = pool_name
   end
 
   # Call within mailer method to set unique args for this email.
@@ -214,6 +219,9 @@ module SendGrid
 
       header_opts[:unique_args] = unique_args unless unique_args.empty?
     end
+
+    # Set pool
+    header_opts[:ip_pool] = @sg_pool if @sg_pool
 
     # Set category
     if @sg_category && @sg_category == :use_subject_lines
