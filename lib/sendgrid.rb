@@ -108,6 +108,12 @@ module SendGrid
     @sg_send_at = utc_timestamp
   end
 
+  # Call within mailer method to concatenate sendgrid categories.
+  # Will not remove duplicates.
+  def append_sendgrid_category(category)
+    @sg_category = @sg_category + category
+  end
+
   # Call within mailer method to set ip pool for this email
   def sendgrid_pool(pool_name)
     @sg_pool = pool_name
