@@ -111,7 +111,7 @@ module SendGrid
   # Call within mailer method to concatenate sendgrid categories.
   # Will not remove duplicates.
   def append_sendgrid_category(category)
-    @sg_category = @sg_category + category
+    @sg_category = (@sg_category || []) + category
   end
 
   # Call within mailer method to set ip pool for this email
