@@ -103,6 +103,7 @@ module SendGrid
     @sg_category = category
   end
 
+  # Call within mailer method to set send time for this mail
   def send_at(utc_timestamp)
     @sg_send_at = utc_timestamp
   end
@@ -225,6 +226,7 @@ module SendGrid
       header_opts[:category] = self.class.default_sg_category
     end
 
+    #Set send_at if set by the user
     header_opts[:send_at] = @sg_send_at unless @sg_send_at.blank?
 
     # Set multi-recipients
