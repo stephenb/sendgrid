@@ -28,7 +28,7 @@ module SendGrid
                       :default_footer_text, :default_spamcheck_score, :default_sg_unique_args
       end
       attr_accessor :sg_category, :sg_options, :sg_disabled_options, :sg_recipients, :sg_substitutions,
-                    :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args
+                    :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args, :sg_send_at
     end
 
     # NOTE: This commented-out approach may be a "safer" option for Rails 3, but it
@@ -101,6 +101,10 @@ module SendGrid
   # Call within mailer method to override the default value.
   def sendgrid_category(category)
     @sg_category = category
+  end
+
+  def send_at(utc_timestamp)
+    @sg_send_at = utc_timestamp
   end
 
   # Call within mailer method to set unique args for this email.
@@ -220,6 +224,8 @@ module SendGrid
     elsif self.class.default_sg_category
       header_opts[:category] = self.class.default_sg_category
     end
+
+    header_opts[:send_at] = @sg_send_at unless @sg_send_at.blank?
 
     # Set multi-recipients
     if @sg_recipients && !@sg_recipients.empty?
