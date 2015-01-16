@@ -104,7 +104,7 @@ module SendGrid
   end
 
   # Call within mailer method to set send time for this mail
-  def send_at(utc_timestamp)
+  def sendgrid_send_at(utc_timestamp)
     @sg_send_at = utc_timestamp
   end
 
