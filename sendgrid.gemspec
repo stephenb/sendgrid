@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
     "test/test_helper.rb"
   ]
   s.homepage = "http://github.com/stephenb/sendgrid"
+  s.license = "MIT"
   s.require_paths = ["lib"]
   s.rubygems_version = "1.8.24"
   s.summary = "A gem that allows simple integration of ActionMailer with SendGrid (http://sendgrid.com)"
