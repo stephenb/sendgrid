@@ -101,7 +101,7 @@ module SendGrid
 
   # Call within mailer method to set the template_id.
   def sendgrid_template_id(template_id)
-    @gs_template_id = template_id
+    @sg_template_id = template_id
   end
 
   # Call within mailer method to override the default value.
@@ -299,8 +299,8 @@ module SendGrid
           end
 
         when :templates
-          if @gs_template_id
-            filters[:templates]['settings']['template_id'] = @gs_template_id
+          if @sg_template_id
+            filters[:templates]['settings']['template_id'] = @sg_template_id
           end
       end
     end
