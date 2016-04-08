@@ -10,7 +10,8 @@ module SendGrid
     :subscriptiontrack,
     :footer,
     :spamcheck,
-    :bypass_list_management
+    :bypass_list_management,
+    :templates
   ]
 
   VALID_GANALYTICS_OPTIONS = [
@@ -67,7 +68,7 @@ module SendGrid
       self.default_sg_options = Array.new unless self.default_sg_options
       options.each { |option| self.default_sg_options << option if VALID_OPTIONS.include?(option) }
     end
-    
+
     # Sets the default text for subscription tracking (must be enabled).
     # There are two options:
     # 1. Add an unsubscribe link at the bottom of the email
@@ -96,6 +97,11 @@ module SendGrid
     def sendgrid_unique_args(unique_args = {})
       self.default_sg_unique_args = unique_args
     end
+  end
+
+  # Call within mailer method to set the template_id.
+  def sendgrid_template_id(template_id)
+    @sg_template_id = template_id
   end
 
   # Call within mailer method to override the default value.
@@ -298,6 +304,11 @@ module SendGrid
             @ganalytics_options.each do |key, value|
               filters[:ganalytics]['settings'][key.to_s] = value
             end
+          end
+
+        when :templates
+          if @sg_template_id
+            filters[:templates]['settings']['template_id'] = @sg_template_id
           end
       end
     end

@@ -39,4 +39,28 @@ class SendgridTest < Test::Unit::TestCase
     actual = JSON.parse(mail.header['X-SMTPAPI'].value)
     assert_equal(expected, actual)
   end
+
+  should "something something sendgrid templates" do
+
+    sendgrid_template_uuid = "sendgrid-template-uuid"
+    @options[:sendgrid_template_id] = sendgrid_template_uuid
+    @options.delete(:substitutions)
+
+    test_email = SendgridTemplateMailer.create_test(@options).deliver
+
+    assert_equal(test_email.header["sendgrid-template-id"].value, sendgrid_template_uuid)
+    expected_filters = {
+      "templates" => {
+        "settings" => {
+          "enable" => 1,
+          "template_id" => "sendgrid-template-uuid"
+        }
+      }
+    }
+    filters = JSON.parse(test_email.header["X-SMTPAPI"].value)["filters"]
+    assert_equal(expected_filters, filters)
+
+  end
+  
+
 end

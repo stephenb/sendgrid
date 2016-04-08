@@ -46,6 +46,32 @@ class SendgridCampaignTestMailer < ActionMailer::Base
   end
 end
 
+class SendgridTemplateMailer < ActionMailer::Base
+  include SendGrid
+
+  def create_test(options)
+    handle_sendgrid_options(options)
+    mail(options)
+  end
+
+  protected
+  def handle_sendgrid_options(options)
+    if options[:sendgrid_template_id]
+      sendgrid_enable :templates
+      sendgrid_template_id options[:sendgrid_template_id]
+    end
+
+    if options[:substitutions]
+      options[:substitutions].each do |find, replace|
+        sendgrid_substitute(find, replace)
+      end
+    end
+
+    sendgrid_recipients  options[:to]
+    sendgrid_category(options[:category])
+  end
+end
+
 class SendgridUniqueArgsMailer < ActionMailer::Base
   include SendGrid
   sendgrid_unique_args({ :test_arg => "test value" })
