@@ -124,4 +124,8 @@ TODO
 
 * Test coverage (I would appreciate help writing tests).
 * Possibly integrate with SendGrid's Event API and some of the other goodies they provide.
+* Upgrade to SendGrid v3 Web API
+    * https://sendgrid.com/docs/Classroom/Send/v3_Mail_Send/how_to_migrate_from_v2_to_v3_mail_send.html
+    * https://sendgrid.com/docs/API_Reference/Web_API_v3/Mail/index.html
+
 
