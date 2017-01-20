@@ -67,7 +67,7 @@ module SendGrid
       self.default_sg_options = Array.new unless self.default_sg_options
       options.each { |option| self.default_sg_options << option if VALID_OPTIONS.include?(option) }
     end
-    
+
     # Sets the default text for subscription tracking (must be enabled).
     # There are two options:
     # 1. Add an unsubscribe link at the bottom of the email
@@ -96,6 +96,12 @@ module SendGrid
     def sendgrid_unique_args(unique_args = {})
       self.default_sg_unique_args = unique_args
     end
+  end
+
+  # Call within mailer to set the asm_group_id for group unsubscribe tracking
+  # https://sendgrid.com/docs/API_Reference/SMTP_API/suppressions.html
+  def sendgrid_asm_group_id(asm_group_id)
+    @sg_asm_group_id = asm_group_id
   end
 
   # Call within mailer method to override the default value.
@@ -161,7 +167,7 @@ module SendGrid
     @ganalytics_options = []
     options.each { |option| @ganalytics_options << option if VALID_GANALYTICS_OPTIONS.include?(option[0].to_sym) }
   end
-  
+
   # only override the appropriate methods for the current ActionMailer version
   if ActionMailer::Base.respond_to?(:mail)
 
@@ -206,7 +212,7 @@ module SendGrid
 
     #if not called within the mailer method, this will be nil so we default to empty hash
     @sg_unique_args = @sg_unique_args || {}
-    
+
     # set the unique arguments
     if @sg_unique_args || self.class.default_sg_unique_args
       unique_args = self.class.default_sg_unique_args || {}
@@ -225,6 +231,9 @@ module SendGrid
     elsif self.class.default_sg_category
       header_opts[:category] = self.class.default_sg_category
     end
+
+    # Set asm_group_id if set by the user
+    header_opts[:asm_group_id] = @sg_asm_group_id unless @sg_asm_group_id.blank?
 
     #Set send_at if set by the user
     header_opts[:send_at] = @sg_send_at unless @sg_send_at.blank?
