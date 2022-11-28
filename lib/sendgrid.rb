@@ -167,12 +167,6 @@ module SendGrid
     @sg_asm_group_id = unsubscribe_group_id
   end
 
-  # Call within mailer method to bypass unsubscribe management
-  # IE email will be sent even if recipient is unsubscribed
-  def sendgrid_bypass_unsubscribe_management
-    @sg_bypass_unsubscribe_management = true
-  end
-
   # only override the appropriate methods for the current ActionMailer version
   if ActionMailer::Base.respond_to?(:mail)
 
@@ -267,9 +261,6 @@ module SendGrid
 
     # Set unsubscribe group
     header_opts[:asm_group_id] = @sg_asm_group_id if @sg_asm_group_id
-
-    # Enable bypass unsubscribe management
-    header_opts[:filters][:bypass_unsubscribe_management] = true if @sg_bypass_unsubscribe_management
 
     header_opts.to_json.gsub(/(["\]}])([,:])(["\[{])/, '\\1\\2 \\3')
   end
