@@ -161,7 +161,12 @@ module SendGrid
     @ganalytics_options = []
     options.each { |option| @ganalytics_options << option if VALID_GANALYTICS_OPTIONS.include?(option[0].to_sym) }
   end
-  
+
+  # Call within mailer method to set unsubscribe_group_id
+  def sendgrid_unsubscribe_group_id(unsubscribe_group_id)
+    @sg_asm_group_id = unsubscribe_group_id
+  end
+
   # only override the appropriate methods for the current ActionMailer version
   if ActionMailer::Base.respond_to?(:mail)
 
@@ -206,7 +211,7 @@ module SendGrid
 
     #if not called within the mailer method, this will be nil so we default to empty hash
     @sg_unique_args = @sg_unique_args || {}
-    
+
     # set the unique arguments
     if @sg_unique_args || self.class.default_sg_unique_args
       unique_args = self.class.default_sg_unique_args || {}
@@ -253,6 +258,9 @@ module SendGrid
       filters = filters_hash_from_options(enabled_opts, @sg_disabled_options)
       header_opts[:filters] = filters if filters && !filters.empty?
     end
+
+    # Set unsubscribe group
+    header_opts[:asm_group_id] = @sg_asm_group_id if @sg_asm_group_id
 
     header_opts.to_json.gsub(/(["\]}])([,:])(["\[{])/, '\\1\\2 \\3')
   end
